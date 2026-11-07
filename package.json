@@ -1,7 +1,7 @@
 {
-  "name": "meow-restart",
-  "version": "0.3.1",
-  "description": "喵重启：Web GUI 顶部可拖动的 ⟳ 小按钮——点一下弹出小列表，可选「重启」（强杀后原样拉起，让插件/配置改动立即生效）或「关闭」（强制关闭整个 DeepSeek Harness，不重新打开）。v0.3.0 改用 wscript 助手、全程没有命令行黑窗；v0.3.1 修好「重启后不回来」——助手继承的 ELECTRON_RUN_AS_NODE 会让被拉起的 exe 以 Node 模式空跑退出，现已清干净并带 explorer 兜底",
+  "name": "restart-bell",
+  "version": "0.4.0",
+  "description": "重启铃 restart-bell：给 DeepSeek Harness 的 Web GUI 顶部加一个可拖动的 ⟳ 小按钮，点一下弹小列表——「重启」强杀后原样拉起（插件/配置改动立即生效），「关闭」只关不拉。全程无命令行黑窗；助手先杀主进程再清场，拉起后核对进程真的活着，不行就用 explorer 兜底",
   "keywords": [
     "deepseek-harness",
     "dsh",
@@ -12,7 +12,8 @@
     "one-click",
     "no-console-window",
     "wscript",
-    "vbs"
+    "vbs",
+    "restart-bell"
   ],
   "type": "module",
   "main": "lib/index.js",
@@ -36,11 +37,11 @@
   "author": "zhaoyushuo987",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zhaoyushuo987/meow-restart.git"
+    "url": "git+https://github.com/zhaoyushuo987/restart-bell.git"
   },
-  "homepage": "https://github.com/zhaoyushuo987/meow-restart#readme",
+  "homepage": "https://github.com/zhaoyushuo987/restart-bell#readme",
   "bugs": {
-    "url": "https://github.com/zhaoyushuo987/meow-restart/issues"
+    "url": "https://github.com/zhaoyushuo987/restart-bell/issues"
   },
   "engines": {
     "node": ">=18"

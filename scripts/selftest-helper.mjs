@@ -1,4 +1,4 @@
-// Regression self-test for the meow-restart helper.
+// Regression self-test for the restart-bell helper.
 //
 // Proves the two v0.2.x bugs are gone, without touching DSH itself:
 //   * the helper survives its own kill (it runs as wscript.exe, and it never
@@ -16,7 +16,7 @@ import { fileURLToPath } from "node:url";
 import { buildHelperScript } from "../lib/index.js";
 
 const win = process.env.SystemRoot ?? "C:\\Windows";
-const dir = join(tmpdir(), "meow-restart-selftest");
+const dir = join(tmpdir(), "restart-bell-selftest");
 const logPath = join(dir, "helper.log");
 const exe = join(dir, "selfapp.exe");
 const wscript = join(win, "System32", "wscript.exe");

@@ -1,11 +1,11 @@
-# meow-restart 喵重启
+# restart-bell 重启铃
 
-![version](https://img.shields.io/badge/version-0.3.1-ff69b4)
+![version](https://img.shields.io/badge/version-0.4.0-ff69b4)
 ![license](https://img.shields.io/badge/license-MIT-blue)
 ![platform](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-lightgrey)
 ![DSH](https://img.shields.io/badge/DeepSeek%20Harness-plugin-6f42c1)
 
-> https://github.com/zhaoyushuo987/meow-restart
+> https://github.com/zhaoyushuo987/restart-bell
 
 DeepSeek Harness（DSH）插件：在 Web GUI **顶部**加一个 ⟳ 小按钮（默认左上角，可按住拖动）。**点一下弹出一个小列表**，里头两个按钮：
 
@@ -14,13 +14,14 @@ DeepSeek Harness（DSH）插件：在 Web GUI **顶部**加一个 ⟳ 小按钮�
 | 重启 | 强制关闭整个 DSH 并用同一个 exe 原样重新启动（装完插件/改完配置让它立即生效） |
 | 关闭 | 只强制关闭整个 DSH，不重新打开（想彻底退出、释放内存时用） |
 
+> v0.4.0：改名为 **restart-bell 重启铃**（原来是 `meow-restart`）。包名、路由（`/api/restart-bell/*`）、DOM id、临时目录都换了；旧版记下的按钮位置会自动迁移过来，功能与 v0.3.1 完全一致。升级方式是卸旧的、装新的、重启一次。
 > v0.3.0：把命令行黑窗彻底去掉（助手改用 wscript 跑 VBS，GUI 子系统，结构上不会出现控制台）。
 > v0.3.1：修好 v0.3.0「点了重启，DSH 关了但永远不回来」——助手继承了宿主的 `ELECTRON_RUN_AS_NODE=1`，被拉起的 exe 会以 Node 模式空跑后立刻退出（日志却照常写 `relaunching` / `done`，看着像成功）。现在 spawn 助手前和 VBS 里各清一次环境，并核对新进程是否真的活着，起不来就交给 explorer.exe 兜底。
 
 ## 安装（推荐：源码 link 方式）
 
 ```powershell
-git clone https://github.com/zhaoyushuo987/meow-restart
+git clone https://github.com/zhaoyushuo987/restart-bell
 dsh plugin --profile desktop add link:<上面克隆出来的目录>
 ```
 
@@ -35,10 +36,10 @@ dsh plugin --profile desktop add link:<上面克隆出来的目录>
 
 ## 它是怎么做的（放心点）
 
-- 列表只是前端 DOM（无 React、无应用内部接口），重启/关闭只向本机 GUI 服务发一个 POST（带自定义头 `x-meow-restart`，防误触、防网页跨站触发）：
-  - `POST /api/meow-restart/restart`
-  - `POST /api/meow-restart/quit`
-- 宿主立刻回 200，然后写一个 **VBS 助手**（`%TEMP%\meow-restart\helper-<时间戳>.vbs`）并用 **wscript.exe** 分离运行。wscript 是 GUI 子系统程序，**不可能出现控制台黑窗**——v0.2.x 用 cmd.exe 是必然弹窗的：CreateProcess 的 `CREATE_NO_WINDOW` 与 `DETACHED_PROCESS` 互斥，而分离运行必须后者，于是前者被忽略，cmd 自开一个可见控制台。
+- 列表只是前端 DOM（无 React、无应用内部接口），重启/关闭只向本机 GUI 服务发一个 POST（带自定义头 `x-restart-bell`，防误触、防网页跨站触发）：
+  - `POST /api/restart-bell/restart`
+  - `POST /api/restart-bell/quit`
+- 宿主立刻回 200，然后写一个 **VBS 助手**（`%TEMP%\restart-bell\helper-<时间戳>.vbs`）并用 **wscript.exe** 分离运行。wscript 是 GUI 子系统程序，**不可能出现控制台黑窗**——v0.2.x 用 cmd.exe 是必然弹窗的：CreateProcess 的 `CREATE_NO_WINDOW` 与 `DETACHED_PROCESS` 互斥，而分离运行必须后者，于是前者被忽略，cmd 自开一个可见控制台。
 - 助手的动作顺序（关键：**先杀主进程，且全程不用 `/T`**）：
   1. 等 `delayMs`（默认 1200ms，让 200 先回到浏览器）；
   2. `taskkill /F /PID <主进程>`——杀之前先用 WMI 核对该 pid 的镜像名，**不是 DSH 就跳过**（ppid 万一取到 launcher/explorer，绝不误杀，日志记 `skip main pid`）；
@@ -53,7 +54,7 @@ dsh plugin --profile desktop add link:<上面克隆出来的目录>
 - 浏览器打开 GUI 的场景（桌面端点「重启」本窗口会一起死掉，下面是浏览器/远程查看时的行为）：前端必须**先看到 ping 失败一次**，再等到 ping 成功才 `location.reload()`——v0.2.1 是 200 到手就刷新，宿主其实还活着，看起来像「什么都没发生」；10s 内没下线 → 提示「重启没生效：DSH 还在运行，可以再点一次『重启』」；下线后 40s 没回来 → 提示手动打开 DSH（桌面端 `--port 0` 每次随机端口，旧标签页本来就回不来）。点「关闭」仍是 8s 判定。
 - 配置项：`delayMs`（触发到强杀的缓冲，默认 1200）、`enabled: false` 可整体停用。
 
-## 排障：看 `%TEMP%\meow-restart\helper.log`
+## 排障：看 `%TEMP%\restart-bell\helper.log`
 
 每条动作都带本地时间戳。**关不掉/起不来先看这个日志**：
 
@@ -72,22 +73,24 @@ dsh plugin --profile desktop add link:<上面克隆出来的目录>
 
 改了 `scripts/helper-template.vbs` 之后必须重新内联进 `lib/index.js`：`node scripts/embed-helper.mjs`（幂等，可反复跑）。
 
-## 与喵系插件的关系
+## 独立性
 
-与 `meow-cachebilling`（计费气泡）、`meow-memory`（长期记忆）同一家族（meow-*），装在 desktop profile 的 node_modules 里，随 profile 一起加载（本机是 junction → 直接指向源码目录，改完源码重启即生效）。
+这是一个**完全独立**的插件：没有 `dependencies`、不引用别的插件的代码或接口，只做一件事——在顶部放个 ⟳ 按钮、发三个本机请求、跑一个 VBS 助手。名字也不跟任何命名系列绑定，改名只影响包名/路由/存储键，不影响行为。
+
+装法与其它插件一样，放在 profile 的 node_modules 里随 profile 加载（本机是 junction → 直接指向源码目录，改完源码重启即生效），但**它不需要任何同伴**。
 
 ## 手动安装 / 卸载
 
 ```
-dsh plugin --profile desktop add link:C:\Users\86158\Documents\deepseek-harness\meow-restart
-dsh plugin --profile desktop remove meow-restart
+dsh plugin --profile desktop add link:C:\Users\86158\Documents\deepseek-harness\restart-bell
+dsh plugin --profile desktop remove restart-bell
 ```
 
 装完重启一次 DSH 生效。
 
 ## 反馈与许可
 
-遇到问题去 [Issues](https://github.com/zhaoyushuo987/meow-restart/issues) 说一声，附上 `%TEMP%\meow-restart\helper.log` 的尾部几行最有帮助。
+遇到问题去 [Issues](https://github.com/zhaoyushuo987/restart-bell/issues) 说一声，附上 `%TEMP%\restart-bell\helper.log` 的尾部几行最有帮助。
 
 MIT © zhaoyushuo987
 

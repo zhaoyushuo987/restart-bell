@@ -1,5 +1,5 @@
 Option Explicit
-' meow-restart v0.3.1 helper — generated, rewritten on every action.
+' restart-bell v0.3.1 helper — generated, rewritten on every action.
 ' Host is wscript.exe (GUI subsystem): no console window can ever appear.
 Dim sh, fso, logPath, exePath, exeDir, exeName, mainPid, relaunch
 Dim wmi, col, alive, waited, wmiOk, env, mainName, mpSet, mp, fresh

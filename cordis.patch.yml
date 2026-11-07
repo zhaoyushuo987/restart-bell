@@ -1,4 +1,4 @@
-# meow-restart bundle patch: inserts this plugin into a profile layer stack.
+# restart-bell bundle patch: inserts this plugin into a profile layer stack.
 - insert:
-    - id: meow-restart
-      name: meow-restart
+    - id: restart-bell
+      name: restart-bell
