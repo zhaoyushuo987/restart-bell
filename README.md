@@ -1,5 +1,12 @@
 # meow-restart 喵重启
 
+![version](https://img.shields.io/badge/version-0.3.1-ff69b4)
+![license](https://img.shields.io/badge/license-MIT-blue)
+![platform](https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-lightgrey)
+![DSH](https://img.shields.io/badge/DeepSeek%20Harness-plugin-6f42c1)
+
+> https://github.com/zhaoyushuo987/meow-restart
+
 DeepSeek Harness（DSH）插件：在 Web GUI **顶部**加一个 ⟳ 小按钮（默认左上角，可按住拖动）。**点一下弹出一个小列表**，里头两个按钮：
 
 | 按钮 | 作用 |
@@ -9,6 +16,16 @@ DeepSeek Harness（DSH）插件：在 Web GUI **顶部**加一个 ⟳ 小按钮�
 
 > v0.3.0：把命令行黑窗彻底去掉（助手改用 wscript 跑 VBS，GUI 子系统，结构上不会出现控制台）。
 > v0.3.1：修好 v0.3.0「点了重启，DSH 关了但永远不回来」——助手继承了宿主的 `ELECTRON_RUN_AS_NODE=1`，被拉起的 exe 会以 Node 模式空跑后立刻退出（日志却照常写 `relaunching` / `done`，看着像成功）。现在 spawn 助手前和 VBS 里各清一次环境，并核对新进程是否真的活着，起不来就交给 explorer.exe 兜底。
+
+## 安装（推荐：源码 link 方式）
+
+```powershell
+git clone https://github.com/zhaoyushuo987/meow-restart
+dsh plugin --profile desktop add link:<上面克隆出来的目录>
+```
+
+装的时候 DSH 会自动关一次并重新拉起（插件首次生效），之后就多出那个 ⟳ 小按钮。
+要装到别的 profile，把 `--profile desktop` 换成你的 profile 名即可。
 
 ## 用法（懒人三步）
 
@@ -67,3 +84,10 @@ dsh plugin --profile desktop remove meow-restart
 ```
 
 装完重启一次 DSH 生效。
+
+## 反馈与许可
+
+遇到问题去 [Issues](https://github.com/zhaoyushuo987/meow-restart/issues) 说一声，附上 `%TEMP%\meow-restart\helper.log` 的尾部几行最有帮助。
+
+MIT © zhaoyushuo987
+

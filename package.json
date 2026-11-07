@@ -33,6 +33,18 @@
     "selftest": "node scripts/selftest-helper.mjs"
   },
   "license": "MIT",
+  "author": "zhaoyushuo987",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhaoyushuo987/meow-restart.git"
+  },
+  "homepage": "https://github.com/zhaoyushuo987/meow-restart#readme",
+  "bugs": {
+    "url": "https://github.com/zhaoyushuo987/meow-restart/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
