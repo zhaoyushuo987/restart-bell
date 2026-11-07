@@ -18,15 +18,38 @@ DeepSeek Harness（DSH）插件：在 Web GUI **顶部**加一个 ⟳ 小按钮�
 > v0.3.0：把命令行黑窗彻底去掉（助手改用 wscript 跑 VBS，GUI 子系统，结构上不会出现控制台）。
 > v0.3.1：修好 v0.3.0「点了重启，DSH 关了但永远不回来」——助手继承了宿主的 `ELECTRON_RUN_AS_NODE=1`，被拉起的 exe 会以 Node 模式空跑后立刻退出（日志却照常写 `relaunching` / `done`，看着像成功）。现在 spawn 助手前和 VBS 里各清一次环境，并核对新进程是否真的活着，起不来就交给 explorer.exe 兜底。
 
-## 安装（推荐：源码 link 方式）
+## 安装（源码 link 方式）
 
 ```powershell
 git clone https://github.com/zhaoyushuo987/restart-bell
-dsh plugin --profile desktop add link:<上面克隆出来的目录>
 ```
 
-装的时候 DSH 会自动关一次并重新拉起（插件首次生效），之后就多出那个 ⟳ 小按钮。
-要装到别的 profile，把 `--profile desktop` 换成你的 profile 名即可。
+然后把克隆出来的目录以 link 方式加到你想用的 profile 里，两种情形：
+
+**A. 普通 profile（命令行能管的）**
+
+```powershell
+dsh plugin --profile <profile 名> add link:<上面克隆出来的目录>
+```
+
+**B. 桌面 App 的 profile（默认叫 `desktop`）**
+
+它由 Electron 应用独占，命令行 add/remove 会被直接拒绝（`profile "desktop" is managed exclusively by the Electron application`）。这时用 App 里的插件管理界面添加，或者手动改：
+
+1. `<用户目录>\.dsh\profiles\desktop\package.json`：`dependencies` 加 `"restart-bell": "link:C:/路径/restart-bell"`，`dsh.profile.bundles` 数组加 `"restart-bell"`；
+2. 在 `profiles\desktop\node_modules` 下建 junction 指向源码目录（管理员不需要，PowerShell 普通权限即可）：`New-Item -ItemType Junction -Path .\restart-bell -Target C:\路径\restart-bell`；
+3. 重启一次 DSH，左上角就多出那个 ⟳ 小按钮。
+
+### 从旧名 meow-restart 升级
+
+同一个按钮只能有一个主人：先摘掉旧包，再装新的。
+
+```powershell
+dsh plugin --profile <profile 名> remove meow-restart   # App 管理的 profile 见上面 B 的手动方式
+dsh plugin --profile <profile 名> add link:<restart-bell 目录>
+```
+
+旧版记下的按钮位置会从 `meow-restart-pos` 自动迁移到 `restart-bell-pos`，不用重新拖。
 
 ## 用法（懒人三步）
 
