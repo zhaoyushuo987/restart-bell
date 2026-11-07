@@ -1,0 +1,47 @@
+{
+  "name": "meow-restart",
+  "version": "0.3.1",
+  "description": "喵重启：Web GUI 顶部可拖动的 ⟳ 小按钮——点一下弹出小列表，可选「重启」（强杀后原样拉起，让插件/配置改动立即生效）或「关闭」（强制关闭整个 DeepSeek Harness，不重新打开）。v0.3.0 改用 wscript 助手、全程没有命令行黑窗；v0.3.1 修好「重启后不回来」——助手继承的 ELECTRON_RUN_AS_NODE 会让被拉起的 exe 以 Node 模式空跑退出，现已清干净并带 explorer 兜底",
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "dsh-plugin",
+    "restart",
+    "quit",
+    "relaunch",
+    "one-click",
+    "no-console-window",
+    "wscript",
+    "vbs"
+  ],
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/index.js",
+    "lib/client.js",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "scripts": {
+    "build:helper": "node scripts/embed-helper.mjs",
+    "selftest": "node scripts/selftest-helper.mjs"
+  },
+  "license": "MIT",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-settings-plugins"
+      ]
+    }
+  }
+}

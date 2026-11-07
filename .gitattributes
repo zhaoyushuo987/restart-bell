@@ -1,0 +1,8 @@
+# 统一按 LF 存库，Windows 上的脚本按 CRLF 检出
+* text=auto eol=lf
+*.vbs text eol=crlf
+*.cmd text eol=crlf
+*.bat text eol=crlf
+*.png binary
+*.ico binary
+*.zip binary
