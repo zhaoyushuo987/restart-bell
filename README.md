@@ -14,7 +14,6 @@ DeepSeek Harness（DSH）插件：在 Web GUI **顶部**加一个 ⟳ 小按钮�
 | 重启 | 强制关闭整个 DSH 并用同一个 exe 原样重新启动（装完插件/改完配置让它立即生效） |
 | 关闭 | 只强制关闭整个 DSH，不重新打开（想彻底退出、释放内存时用） |
 
-> v0.4.0：改名为 **restart-bell 重启铃**（原来是 `meow-restart`）。包名、路由（`/api/restart-bell/*`）、DOM id、临时目录都换了；旧版记下的按钮位置会自动迁移过来，功能与 v0.3.1 完全一致。升级方式是卸旧的、装新的、重启一次。
 > v0.3.0：把命令行黑窗彻底去掉（助手改用 wscript 跑 VBS，GUI 子系统，结构上不会出现控制台）。
 > v0.3.1：修好 v0.3.0「点了重启，DSH 关了但永远不回来」——助手继承了宿主的 `ELECTRON_RUN_AS_NODE=1`，被拉起的 exe 会以 Node 模式空跑后立刻退出（日志却照常写 `relaunching` / `done`，看着像成功）。现在 spawn 助手前和 VBS 里各清一次环境，并核对新进程是否真的活着，起不来就交给 explorer.exe 兜底。
 
@@ -39,17 +38,6 @@ dsh plugin --profile <profile 名> add link:<上面克隆出来的目录>
 1. `<用户目录>\.dsh\profiles\desktop\package.json`：`dependencies` 加 `"restart-bell": "link:C:/路径/restart-bell"`，`dsh.profile.bundles` 数组加 `"restart-bell"`；
 2. 在 `profiles\desktop\node_modules` 下建 junction 指向源码目录（管理员不需要，PowerShell 普通权限即可）：`New-Item -ItemType Junction -Path .\restart-bell -Target C:\路径\restart-bell`；
 3. 重启一次 DSH，左上角就多出那个 ⟳ 小按钮。
-
-### 从旧名 meow-restart 升级
-
-同一个按钮只能有一个主人：先摘掉旧包，再装新的。
-
-```powershell
-dsh plugin --profile <profile 名> remove meow-restart   # App 管理的 profile 见上面 B 的手动方式
-dsh plugin --profile <profile 名> add link:<restart-bell 目录>
-```
-
-旧版记下的按钮位置会从 `meow-restart-pos` 自动迁移到 `restart-bell-pos`，不用重新拖。
 
 ## 用法（懒人三步）
 
@@ -98,7 +86,7 @@ dsh plugin --profile <profile 名> add link:<restart-bell 目录>
 
 ## 独立性
 
-这是一个**完全独立**的插件：没有 `dependencies`、不引用别的插件的代码或接口，只做一件事——在顶部放个 ⟳ 按钮、发三个本机请求、跑一个 VBS 助手。名字也不跟任何命名系列绑定，改名只影响包名/路由/存储键，不影响行为。
+这是一个**完全独立**的插件：没有 `dependencies`、不引用别的插件的代码或接口，只做一件事——在顶部放个 ⟳ 按钮、发三个本机请求、跑一个 VBS 助手。包名、路由、存储键都属于它自己，不依赖任何命名系列。
 
 装法与其它插件一样，放在 profile 的 node_modules 里随 profile 加载（本机是 junction → 直接指向源码目录，改完源码重启即生效），但**它不需要任何同伴**。
 
